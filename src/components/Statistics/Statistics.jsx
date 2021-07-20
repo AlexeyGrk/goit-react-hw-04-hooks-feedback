@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import { useState } from "react";
 
 import {
   FeedbackContainer,
@@ -11,101 +11,78 @@ import {
 import FeedbackOptions from "../FeedbackOptions/FeedbackOptions";
 import Section from "../Section/Section";
 import Notification from "../Messages/Notification";
-export default class Statistics extends Component {
-  static defaultProps = {};
 
-  state = {
-    good: this.props.good,
-    neutral: this.props.neutral,
-    bad: this.props.bad,
+const Statistics = (props) => {
+  const [good, setGood] = useState(props.good);
+  const [neutral, setNeutral] = useState(props.neutral);
+  const [bad, setBad] = useState(props.bad);
+  const updateCounterGood = () => {
+    setGood((prevState) => prevState + 1);
   };
-  updateCounterGood = () => {
-    this.setState((prevState) => {
-      return {
-        good: prevState.good + 1,
-      };
-    });
+  const updateCounterNeutral = () => {
+    setNeutral((prevState) => prevState + 1);
   };
-  updateCounterNeutral = () => {
-    this.setState((prevState) => {
-      return {
-        neutral: prevState.neutral + 1,
-      };
-    });
+  const updateCounterBad = () => {
+    setBad((prevState) => prevState + 1);
   };
-  updateCounterBad = () => {
-    this.setState((prevState) => {
-      return {
-        bad: prevState.bad + 1,
-      };
-    });
+  const countTotalFeedback = () => {
+    return bad + good + neutral;
   };
-  countTotalFeedback = () => {
-    return this.state.bad + this.state.good + this.state.neutral;
+  const countPositiveFeedbackPercentage = () => {
+    return Math.floor((good / (bad + good + neutral)) * 100) || 0;
   };
-  countPositiveFeedbackPercentage = () => {
-    return (
-      Math.floor(
-        (this.state.good /
-          (this.state.bad + this.state.good + this.state.neutral)) *
-          100
-      ) || 0
-    );
-  };
+  return (
+    <FeedbackContainer>
+      <FeedbackMainTitle>Please leave feedback</FeedbackMainTitle>
+      <FeedbackOptions
+        updateCounterGood={updateCounterGood}
+        updateCounterNeutral={updateCounterNeutral}
+        updateCounterBad={updateCounterBad}
+      />
+      <FeedbackSecondatyTitle>Statistics</FeedbackSecondatyTitle>
+      {bad + good + neutral === 0 ? (
+        <Notification message="No feedback given" />
+      ) : (
+        <FeedbackStatisticsList>
+          <Section title={"Good :"}>
+            <FeedbackStatisticsListItem>
+              <FeedbackStatisticsListItemCounterValue>
+                {good}
+              </FeedbackStatisticsListItemCounterValue>
+            </FeedbackStatisticsListItem>
+          </Section>
+          <Section title={" Neutral :"}>
+            <FeedbackStatisticsListItem>
+              <FeedbackStatisticsListItemCounterValue>
+                {neutral}
+              </FeedbackStatisticsListItemCounterValue>
+            </FeedbackStatisticsListItem>
+          </Section>
+          <Section title={"Bad:"}>
+            <FeedbackStatisticsListItem>
+              <FeedbackStatisticsListItemCounterValue>
+                {bad}
+              </FeedbackStatisticsListItemCounterValue>
+            </FeedbackStatisticsListItem>
+          </Section>
+          <Section title={"Total :"}>
+            <FeedbackStatisticsListItem>
+              <FeedbackStatisticsListItemCounterValue>
+                {countTotalFeedback()}
+              </FeedbackStatisticsListItemCounterValue>
+            </FeedbackStatisticsListItem>
+          </Section>
+          <Section title={" Positive feedback :"}>
+            <FeedbackStatisticsListItem>
+              <FeedbackStatisticsListItemCounterValue>
+                {countPositiveFeedbackPercentage()}%
+              </FeedbackStatisticsListItemCounterValue>
+            </FeedbackStatisticsListItem>
+          </Section>
+        </FeedbackStatisticsList>
+      )}
+    </FeedbackContainer>
+  );
+};
 
-  //
-  render() {
-    return (
-      <FeedbackContainer>
-        <FeedbackMainTitle>Please leave feedback</FeedbackMainTitle>
-        <FeedbackOptions
-          updateCounterGood={this.updateCounterGood}
-          updateCounterNeutral={this.updateCounterNeutral}
-          updateCounterBad={this.updateCounterBad}
-        />
-        <FeedbackSecondatyTitle>Statistics</FeedbackSecondatyTitle>
-        {this.state.bad + this.state.good + this.state.neutral === 0 ? (
-          <Notification message="No feedback given" />
-        ) : (
-          <FeedbackStatisticsList>
-            <Section title={"Good :"}>
-              <FeedbackStatisticsListItem>
-                <FeedbackStatisticsListItemCounterValue>
-                  {this.state.good}
-                </FeedbackStatisticsListItemCounterValue>
-              </FeedbackStatisticsListItem>
-            </Section>
-            <Section title={" Neutral :"}>
-              <FeedbackStatisticsListItem>
-                <FeedbackStatisticsListItemCounterValue>
-                  {this.state.neutral}
-                </FeedbackStatisticsListItemCounterValue>
-              </FeedbackStatisticsListItem>
-            </Section>
-            <Section title={"Bad:"}>
-              <FeedbackStatisticsListItem>
-                <FeedbackStatisticsListItemCounterValue>
-                  {this.state.bad}
-                </FeedbackStatisticsListItemCounterValue>
-              </FeedbackStatisticsListItem>
-            </Section>
-            <Section title={"Total :"}>
-              <FeedbackStatisticsListItem>
-                <FeedbackStatisticsListItemCounterValue>
-                  {this.countTotalFeedback()}
-                </FeedbackStatisticsListItemCounterValue>
-              </FeedbackStatisticsListItem>
-            </Section>
-            <Section title={" Positive feedback :"}>
-              <FeedbackStatisticsListItem>
-                <FeedbackStatisticsListItemCounterValue>
-                  {this.countPositiveFeedbackPercentage()}%
-                </FeedbackStatisticsListItemCounterValue>
-              </FeedbackStatisticsListItem>
-            </Section>
-          </FeedbackStatisticsList>
-        )}
-      </FeedbackContainer>
-    );
-  }
-}
+export default Statistics;
